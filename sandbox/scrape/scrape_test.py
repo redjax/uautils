@@ -7,7 +7,7 @@ import settings
 import setup
 import http_lib
 
-from bs4 import BeautifulSoup
+import bs4
 
 html_cache_dir = Path("sandbox/scrape/html_cache")
 
@@ -21,9 +21,11 @@ def main(urls: dict[str, dict[str, str]], html_cache_dir: str = html_cache_dir):
     headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"}
     log.debug(f"Headers: {headers}")
 
-    soups: list[BeautifulSoup] = []
+    soups: list[bs4.BeautifulSoup] = []
+    user_agents: list[str] = []
 
     for ua_dict_name in urls:
+        log.info(f"Scraping {ua_dict_name} User Agent strings")
         ua_dict = urls[ua_dict_name]
         log.debug(f"User Agent dict: {ua_dict}")
         log.debug(f"Keys: {ua_dict.keys()}")
@@ -39,13 +41,30 @@ def main(urls: dict[str, dict[str, str]], html_cache_dir: str = html_cache_dir):
         else:
             log.info(f"Response: [{res.status_code}: {res.reason_phrase}]")
             
-        soup = BeautifulSoup(res.text, "html.parser")
-        log.info(f"Soup type: {type(soup)}")
-        log.info(f"Soup: {soup.prettify()}")
+        soup = bs4.BeautifulSoup(res.text, "html.parser")
+        # log.info(f"Soup type: {type(soup)}")
+        # log.info(f"Soup: {soup.prettify()}")
         
         with open(f"{html_cache_dir}/{ua_dict['url'].replace('http://', '').replace('https://', '').replace('/', '__').replace('%', '--')}.html", "w") as f:
             f.write(soup.prettify())
-    
+        
+        list_div: bs4.Tag = soup.find("div", attrs={"id": "liste"})
+        # log.debug(f"UA list div ({type(list_div)}): {list_div}")
+        
+        ua_lists: bs4.ResultSet[t.Any] = list_div.find_all("ul")
+        # log.debug(f"UA lists ({type(ua_lists)}): {ua_lists}")
+        
+        for ua_list in ua_lists:
+            links = ua_list.find_all("a")
+            # log.debug(f"Found links ({type(links)}): {links}")
+            
+            for link in links:
+                user_agents.append(link.text)
+                
+    log.info(f"Retrieved [{len(user_agents)}] User Agent strings")
+    log.debug(f"Example UAs: {user_agents[:5]}")
+        
+          
     
     
 if __name__ == "__main__":
