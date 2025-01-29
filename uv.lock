@@ -970,6 +970,7 @@ name = "uautils"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "bs4" },
     { name = "coreutils-lib" },
     { name = "database-lib" },
     { name = "depends-lib" },
@@ -996,6 +997,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "bs4", specifier = ">=0.0.2" },
     { name = "coreutils-lib", editable = "libs/coreutils-lib" },
     { name = "database-lib", editable = "libs/database-lib" },
     { name = "depends-lib", editable = "libs/depends-lib" },
