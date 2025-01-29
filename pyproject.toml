@@ -8,13 +8,19 @@ requires-python = ">=3.11"
 license = "MIT"
 
 dependencies = [
+    "coreutils-lib",
+    "database-lib",
+    "depends-lib",
     "dynaconf>=3.2.7",
     "hishel>=0.1.1",
+    "http-lib",
     "httpx>=0.28.1",
     "loguru>=0.7.3",
     "pandas>=2.2.3",
     "pyarrow>=19.0.0",
     "pydantic>=2.10.6",
+    "settings-lib",
+    "setup-lib",
     "sqlalchemy>=2.0.37",
 ]
 
@@ -30,10 +36,10 @@ members = ["libs/*", "packages/*", "applications/*"]
 
 [tool.uv.sources]
 coreutils-lib = { workspace = true }
-settings-lib = { workspace = true }
 database-lib = { workspace = true }
 depends-lib = { workspace = true }
 http-lib = { workspace = true }
+settings-lib = { workspace = true }
 setup-lib = { workspace = true }
 
 [build-system]
