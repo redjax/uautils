@@ -2,6 +2,7 @@ from loguru import logger as log
 
 from pathlib import Path
 import typing as t
+import json
 
 import settings
 import setup
@@ -66,12 +67,18 @@ def main(urls: dict[str, dict[str, str]], html_cache_dir: str = html_cache_dir):
             links = ua_list.find_all("a")
             # log.debug(f"Found links ({type(links)}): {links}")
             
+            link_texts = [l.text for l in links]
+            
             ## Add links to results
-            result = {"type": ua_type, "user_agents": links}
+            result = {"type": ua_type, "user_agents": link_texts}
             all_user_agents.append(result)
             
     log.info(f"Found [{len(all_user_agents)}] UA string(s)")
     log.debug(f"Example UA strings: {all_user_agents[:5]}")
+    
+    with open("./sandbox/scrape/all_ua_strings.json", "w") as f:
+        data = json.dumps(all_user_agents, sort_keys=True, indent=4, default=str)
+        f.write(data)
 
     
 if __name__ == "__main__":
