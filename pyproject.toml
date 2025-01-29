@@ -1,0 +1,49 @@
+[project]
+name = "uautils"
+version = "0.1.0"
+description = "Utility packages for browser user agent (UA) strings."
+authors = [ { name = "redjax", email = "no@none.com" }]
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+
+dependencies = [
+    "dynaconf>=3.2.7",
+    "hishel>=0.1.1",
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "pandas>=2.2.3",
+    "pyarrow>=19.0.0",
+    "pydantic>=2.10.6",
+    "sqlalchemy>=2.0.37",
+]
+
+[project.urls]
+Homepage = "https://github.com/redjax/uautils"
+# Documentation = ""
+Repository = "https://github.com/redjax/uautils"
+# Issues = ""
+# Changelog = ""
+
+[tool.uv.workspace]
+members = ["libs/*", "packages/*", "applications/*"]
+
+[tool.uv.sources]
+coreutils-lib = { workspace = true }
+settings-lib = { workspace = true }
+database-lib = { workspace = true }
+depends-lib = { workspace = true }
+http-lib = { workspace = true }
+setup-lib = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "nox>=2024.10.9",
+    "pre-commit>=4.1.0",
+    "pytest-xdist>=3.6.1",
+    "ruff>=0.9.3",
+]
