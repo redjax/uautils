@@ -75,7 +75,7 @@ def main(urls: list[dict[str,str]], html_cache_dir: str = html_cache_dir):
             
             log.debug(f"Create results object, prettify 'soup' objects")
             ## Add links to results
-            result = {"category": ua_category, "user_agents": link_texts, "html": soup, "url": ua_page_url}
+            result = {"category": ua_category, "user_agents": link_texts, "url": ua_page_url}
             log.debug(f"Append user agent scrape results to list")
             all_user_agents.append(result)
             
@@ -85,8 +85,7 @@ def main(urls: list[dict[str,str]], html_cache_dir: str = html_cache_dir):
     log.info(f"Saving to ./sandbox/scrape/all_ua_strings.json")
     try:
         with open("./sandbox/scrape/all_ua_strings.json", "w") as f:
-            modified_user_agents = [d.pop("html") for d in all_user_agents]
-            data = json.dumps(modified_user_agents, sort_keys=True, indent=4, default=str)
+            data = json.dumps(all_user_agents, sort_keys=True, indent=4, default=str)
             f.write(data)
     except Exception as exc:
         msg = f"({type(exc)}) Error writing to file './sandbox/scrape/all_ua_strings.json'. Details: {exc}"
