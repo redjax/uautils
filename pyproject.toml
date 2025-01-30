@@ -24,6 +24,7 @@ dependencies = [
     "settings-lib",
     "setup-lib",
     "sqlalchemy>=2.0.37",
+    "ua-scraper",
 ]
 
 [project.urls]
@@ -44,6 +45,7 @@ http-lib = { workspace = true }
 settings-lib = { workspace = true }
 setup-lib = { workspace = true }
 domain = { workspace = true }
+ua-scraper = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

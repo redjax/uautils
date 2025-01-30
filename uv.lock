@@ -986,6 +986,7 @@ dependencies = [
     { name = "settings-lib" },
     { name = "setup-lib" },
     { name = "sqlalchemy" },
+    { name = "ua-scraper" },
 ]
 
 [package.dev-dependencies]
@@ -1014,6 +1015,7 @@ requires-dist = [
     { name = "settings-lib", editable = "libs/settings-lib" },
     { name = "setup-lib", editable = "libs/setup-lib" },
     { name = "sqlalchemy", specifier = ">=2.0.37" },
+    { name = "ua-scraper", editable = "packages/ua-scraper" },
 ]
 
 [package.metadata.requires-dev]
