@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from ua-scraper!")
+from .client import get_soup, extract_ua_strings, save_soup_to_html

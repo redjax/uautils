@@ -198,3 +198,6 @@ site/
 .direnv/.*
 .direnv/**/.*
 !.direnv/*.*example*
+
+## Data dir
+.data/output

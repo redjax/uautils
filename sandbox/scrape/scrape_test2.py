@@ -60,18 +60,22 @@ def main(urls: list[dict[str,str]], html_cache_dir: str = html_cache_dir):
         # log.debug(f"UA list div ({type(list_div)}): {list_div}")
         
         ## Extract individual <ul> lists on page
-        ua_lists: bs4.ResultSet[t.Any] = list_div.find_all("ul")
+        ua_lists: bs4.ResultSet[bs4.Tag] = list_div.find_all("ul")
         # log.debug(f"UA lists ({type(ua_lists)}): {ua_lists}")
         
         ## Loop over lists of UA strings
         for ua_list in ua_lists:
+            log.debug(f"UA list type: ({type(ua_list)})")
             log.debug("Extracting <a> tags from soup")
             ## Grab all links
-            links = ua_list.find_all("a")
+            links: bs4.ResultSet[bs4.Tag] = ua_list.find_all("a")
             # log.debug(f"Found links ({type(links)}): {links}")
+            log.debug(f"Links find result type: ({type(links)})")
+            log.debug(f"Links ResultSet item type: ({type(links[0])})")
             
             log.debug("Creating list of UA strings from soup")
             link_texts = [l.text for l in links]
+            log.debug(f"Link type: ({type(link_texts[0])})")
             
             log.debug(f"Create results object, prettify 'soup' objects")
             ## Add links to results
