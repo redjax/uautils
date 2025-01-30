@@ -105,3 +105,34 @@ def save_soup_to_html(soup: bs4.BeautifulSoup, output_file: t.Union[str, Path]):
         log.error(msg)
         
         raise exc
+
+
+def save_scrape_results_to_json(scrape_results: list[dict], output_file: t.Union[str, Path]):
+    output_file: Path = Path(str(output_file)).expanduser() if "~" in (str(output_file)) else Path(str(output_file))
+    
+    if not output_file.parent.exists():
+        log.warning(f"HTML output directory '{output_file.parent}' does not exist. Creating directory.")
+        
+        try:
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            raise PermissionError(f"Permission denied creating path '{output_file.parent}'.")
+        except Exception as exc:
+            msg = f"({type(exc)}) Error creating HTML output directory '{output_file.parent}'. Details: {exc}"
+            log.error(msg)
+            
+            raise exc
+    
+    log.info(f"Saving BeautifulSoup object to HTML file: {output_file}")
+    try:
+        with open(output_file, "w") as f:
+            _data = json.dumps(scrape_results, indent=4, sort_keys=True, default=str)
+            f.write(_data)
+            log.success(f"UA string scrape results saved to path: {output_file}")
+            
+            return True
+    except Exception as exc:
+        msg = f"({type(exc)}) Error saving BeautifulSoup to HTML file at path: {output_file}. Details: {exc}"
+        log.error(msg)
+        
+        raise exc

@@ -46,6 +46,9 @@ def main(ua_urls: list[dict[str, str]]):
         
     log.info(f"Found [{len(all_user_agents)}] user agent(s)")
     log.debug(f"Created [{len(results)}] result object(s)")
+    
+    json_output_file = f".data/output/json/ua_scrape.json"
+    ua_scraper.save_scrape_results_to_json(scrape_results=results, output_file=json_output_file)
 
 
 if __name__ == "__main__":
