@@ -9,6 +9,8 @@ import http_lib
 import bs4
 import httpx
 
+from ..constants import ALL_UA_URL, DESKOP_UA_URL, MOBILE_UA_URL, CONSOLE_UA_URL
+
 
 def get_soup(url: str, headers: dict | None = None, parser: str = "html.parser") -> bs4.BeautifulSoup | None:
     req = http_lib.build_request(url=url, headers=headers)
@@ -136,3 +138,7 @@ def save_scrape_results_to_json(scrape_results: list[dict], output_file: t.Union
         log.error(msg)
         
         raise exc
+
+
+def scrape_all_uas_page(url: str = ALL_UA_URL):
+    ...
