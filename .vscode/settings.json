@@ -6,6 +6,7 @@
         "./libs/http-lib/src",
         "./libs/settings-lib/src",
         "./libs/setup-lib/src",
-        "./libs/packages/domain/src"
+        "./libs/packages/domain/src",
+        "./packages/domain/src"
     ]
 }

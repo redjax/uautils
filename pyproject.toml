@@ -12,6 +12,7 @@ dependencies = [
     "coreutils-lib",
     "database-lib",
     "depends-lib",
+    "domain",
     "dynaconf>=3.2.7",
     "hishel>=0.1.1",
     "http-lib",
@@ -42,6 +43,7 @@ depends-lib = { workspace = true }
 http-lib = { workspace = true }
 settings-lib = { workspace = true }
 setup-lib = { workspace = true }
+domain = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
