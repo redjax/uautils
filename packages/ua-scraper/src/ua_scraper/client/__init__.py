@@ -1,1 +1,1 @@
-from .methods import get_soup, extract_ua_strings, save_soup_to_html, save_scrape_results_to_json, scrape_ua_categories
+from .methods import get_soup, extract_ua_strings, save_soup_to_html, save_scrape_results_to_json, scrape_ua_categories, crawl_ua_categories

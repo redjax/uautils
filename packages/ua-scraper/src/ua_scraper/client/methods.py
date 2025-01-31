@@ -3,6 +3,7 @@ from loguru import logger as log
 import typing as t
 import json
 from pathlib import Path
+import time
 
 import http_lib
 
@@ -157,10 +158,40 @@ def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = 
         a_hrefs: list[bs4.Tag] = col.find_all("a")
         ## Add link tags to list
         ua_category_tags = ua_category_tags + a_hrefs
+        
+        a_href_links = []
+        for _a in a_hrefs:
+            _a_name = _a.text.strip(" ")
+            _a_link = f"{UASTRING_BASE_URL}{_a['href']}".strip(" ")
+            log.debug(f"Link name: {_a_name}, Link: {_a_link}")
+            
+            a_href_links.append({"name": _a_name, "link": _a_link})
+        
         ## Extract URLs from <a> tags
-        a_href_links = [{"name": a.text, "link": f"{UASTRING_BASE_URL}{a['href']}"} for a in a_hrefs]
+        # a_href_links = [{"name": a.text, "link": f"{UASTRING_BASE_URL}{a['href']}"} for a in a_hrefs]
         links = links + a_href_links
     
     return_obj: dict[str, t.Union[list[str], list[dict[str, str]]]] = {"links": links, "extracted_tags": ua_category_tags}
     
     return return_obj
+
+
+def crawl_ua_categories(headers: dict | None = None, parser: str = "html.parser", request_sleep: int = 5):
+    category_uas: dict[str, list[str] | list[dict[str, str]]] = scrape_ua_categories(headers=headers, parser=parser)
+    categories = category_uas["links"]
+
+    for category in categories["links"]:
+        log.debug(category)
+        try:
+            category_soup = get_soup(url=category["link"])
+        except Exception as exc:
+            msg= f"({type(exc)}) Error scraping page '{category['link']}'. Details: {exc}"
+            log.error(f"{msg}")
+            continue
+
+        ua_strings: list[str] = extract_ua_strings(soup=category_soup)
+        category_uas.append({"client": category["name"], "user_agents": ua_strings})
+
+        if request_sleep:
+            print(f"Sleeping for {request_sleep} second(s)...")
+            time.sleep(request_sleep)

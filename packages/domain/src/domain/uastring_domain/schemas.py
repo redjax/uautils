@@ -5,8 +5,7 @@ from pydantic import BaseModel, Field, field_validator, ValidationError, compute
 
 
 class UAPageScrapeBase(BaseModel):
-    category: str
-    url: str
+    client: str
     user_agents: list[str] | None = Field(default_factory=[], repr=False)
     
 class UAPageScrapeIn(UAPageScrapeBase):
