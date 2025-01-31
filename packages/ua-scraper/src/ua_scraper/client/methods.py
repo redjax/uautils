@@ -9,7 +9,7 @@ import http_lib
 import bs4
 import httpx
 
-from ..constants import ALL_UA_URL, DESKOP_UA_URL, MOBILE_UA_URL, CONSOLE_UA_URL
+from ..constants import ALL_UA_URL, DESKOP_UA_URL, MOBILE_UA_URL, CONSOLE_UA_URL, UASTRING_BASE_URL, UASTRING_CATEGORIES, UASTRING_PAGES_URL
 
 
 def get_soup(url: str, headers: dict | None = None, parser: str = "html.parser") -> bs4.BeautifulSoup | None:
@@ -140,5 +140,27 @@ def save_scrape_results_to_json(scrape_results: list[dict], output_file: t.Union
         raise exc
 
 
-def scrape_all_uas_page(url: str = ALL_UA_URL):
-    ...
+def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = None, parser: str = "html.parser"):
+    soup: bs4.BeautifulSoup = get_soup(url=url, headers=headers, parser=parser)
+    
+    ## Extract UA category table
+    ua_category_tbl: bs4.Tag = soup.find("table", attrs={"id": "auswahl"})
+    
+    ## Extract vertical columns with categories
+    ua_tbl_cols: list[bs4.Tag] = ua_category_tbl.find_all("td")
+    
+    ## Extract category tags
+    ua_category_tags: list[bs4.Tag] = []
+    links: list[str] = []
+    for col in ua_tbl_cols:
+        ## Extract all category links
+        a_hrefs: list[bs4.Tag] = col.find_all("a")
+        ## Add link tags to list
+        ua_category_tags = ua_category_tags + a_hrefs
+        ## Extract URLs from <a> tags
+        a_href_links = [f"{UASTRING_BASE_URL}{a['href']}" for a in a_hrefs]
+        links = links + a_href_links
+    
+    return_obj = {"links": links, "extracted_tags": ua_category_tags}
+    
+    return return_obj
