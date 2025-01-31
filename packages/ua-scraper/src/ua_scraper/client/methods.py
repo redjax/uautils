@@ -140,7 +140,7 @@ def save_scrape_results_to_json(scrape_results: list[dict], output_file: t.Union
         raise exc
 
 
-def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = None, parser: str = "html.parser"):
+def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = None, parser: str = "html.parser") -> dict[str, t.Union[list[str], list[dict[str, str]]]]:
     soup: bs4.BeautifulSoup = get_soup(url=url, headers=headers, parser=parser)
     
     ## Extract UA category table
@@ -158,9 +158,9 @@ def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = 
         ## Add link tags to list
         ua_category_tags = ua_category_tags + a_hrefs
         ## Extract URLs from <a> tags
-        a_href_links = [f"{UASTRING_BASE_URL}{a['href']}" for a in a_hrefs]
+        a_href_links = [{"name": a.text, "link": f"{UASTRING_BASE_URL}{a['href']}"} for a in a_hrefs]
         links = links + a_href_links
     
-    return_obj = {"links": links, "extracted_tags": ua_category_tags}
+    return_obj: dict[str, t.Union[list[str], list[dict[str, str]]]] = {"links": links, "extracted_tags": ua_category_tags}
     
     return return_obj
