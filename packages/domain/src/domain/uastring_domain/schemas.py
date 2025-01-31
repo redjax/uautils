@@ -4,13 +4,13 @@ import typing as t
 from pydantic import BaseModel, Field, field_validator, ValidationError, computed_field
 
 
-class UAPageScrapeBase(BaseModel):
+class UACategoryBase(BaseModel):
     client: str
     user_agents: list[str] | None = Field(default_factory=[], repr=False)
     
-class UAPageScrapeIn(UAPageScrapeBase):
+class UACategoryIn(UACategoryBase):
     pass
 
 
-class UAPageScrapeOut(UAPageScrapeBase):
+class UACategoryOut(UACategoryBase):
     id: int

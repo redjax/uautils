@@ -28,10 +28,10 @@ def main():
     headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"}
 
     ua_category_link_dicts = ua_scraper.crawl_ua_categories(save_json=True)
-    ua_category_links: list[uastring_domain.UAPageScrapeIn] = []
+    ua_category_links: list[uastring_domain.UACategoryIn] = []
     
     for category_link_dict in ua_category_link_dicts:
-        category_links: uastring_domain.UAPageScrapeIn = uastring_domain.UAPageScrapeIn.model_validate(category_link_dict)
+        category_links: uastring_domain.UACategoryIn = uastring_domain.UACategoryIn.model_validate(category_link_dict)
         ua_category_links.append(category_links)
         
     log.info(f"Retrieved [{len(category_links)}] category link(s)")
