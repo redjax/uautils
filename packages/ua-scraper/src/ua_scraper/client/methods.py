@@ -10,6 +10,8 @@ import http_lib
 import bs4
 import httpx
 
+from core_utils import path_utils
+
 from ..constants import ALL_UA_URL, DESKOP_UA_URL, MOBILE_UA_URL, CONSOLE_UA_URL, UASTRING_BASE_URL, UASTRING_CATEGORIES, UASTRING_PAGES_URL
 
 
@@ -171,10 +173,21 @@ def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = 
     return return_obj
 
 
-def crawl_ua_categories(headers: dict | None = None, parser: str = "html.parser", request_sleep: int = 5):
+def crawl_ua_categories(headers: dict | None = None, parser: str = "html.parser", request_sleep: int = 5, save_html: bool = False, html_output_dir: t.Union[str, Path] = "./html_cache", save_json: bool = False, json_output_dir: t.Union[str, Path] = "./json_cache"):
     ua_categories: dict[str, list[str] | list[dict[str, str]]] = scrape_ua_categories(headers=headers, parser=parser)
     categories = ua_categories["links"]
     category_uas: list = []
+    
+    if save_json:
+        if not Path(str(json_output_dir)).exists():
+            log.warning(f"JSON output path '{json_output_dir}' does not exist. Creating.")
+            Path(str(json_output_dir)).mkdir(parents=True, exist_ok=True)
+    
+    if save_html:
+        if not Path(str(html_output_dir)).exists():
+            log.warning(f"HTML output path '{html_output_dir}' does not exist. Creating.")
+            Path(str(html_output_dir)).mkdir(parents=True, exist_ok=True)
+            
     
     log.info(f"Crawling [{len(categories)}] User Agent category/ies")
     for category in categories:
@@ -196,10 +209,27 @@ def crawl_ua_categories(headers: dict | None = None, parser: str = "html.parser"
             log.error(msg)
             
             raise exc
+        
+        if save_json:
+            log.info(f"Saving '{category['name']}' UA string(s) to file '{json_output_dir}/{category['name']}_uas.json")
+            with open(f"{json_output_dir}/{category['name']}_uas.json", "w") as f:
+                _data = json.dumps(category_uas, indent=4, sort_keys=True, default=str)
+                f.write(_data)
 
         if request_sleep:
             print(f"Sleeping for {request_sleep} second(s)...")
             time.sleep(request_sleep)
+            
+    if save_json:
+        log.info(f"Saving scraped JSON data to: {json_output_dir}")
+        _data = json.dumps(category_uas, indent=4, sort_keys=True, default=str)
+        
+        try:
+            with open(f"{json_output_dir}/categorized_uas.json", "w") as f:
+                f.write(_data)
+        except Exception as exc:
+            msg = f"({type(exc)}) Error saving scraped data to JSON file '{json_output_dir}/categorized_uas.json"
+            log.error(msg)
     
     log.info(f"Scraped [{len(category_uas)}] UA string(s)")
     return category_uas

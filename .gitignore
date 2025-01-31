@@ -201,3 +201,5 @@ site/
 
 ## Data dir
 .data/output
+json_cache/
+html_cache/
