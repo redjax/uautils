@@ -57,16 +57,11 @@ def extract_ua_strings(soup: bs4.BeautifulSoup) -> list[str]:
     
     ## Loop over lists of UA strings
     for ua_list in ua_lists:
-        log.debug(f"UA list type: ({type(ua_list)})")
-        log.debug("Extracting <a> tags from soup")
-        
+        # log.info("Extracting <a> tags from soup")
         ## Grab all links
         links: bs4.ResultSet[bs4.Tag] = ua_list.find_all("a")
-        # log.debug(f"Found links ({type(links)}): {links}")
-        # log.debug(f"Links find result type: ({type(links)})")
-        # log.debug(f"Links ResultSet item type: ({type(links[0])})")
         
-        log.debug("Creating list of UA strings from soup")
+        # log.info("Creating list of UA strings from soup")
         link_texts = [link.text for link in links]
         # log.debug(f"Link type: ({type(link_texts[0])})")
         
@@ -74,6 +69,7 @@ def extract_ua_strings(soup: bs4.BeautifulSoup) -> list[str]:
         user_agents = user_agents + link_texts
         
     log.debug(f"Found [{len(user_agents)}] UA string(s)")
+    log.debug(f"Preview 5 UA strings: {user_agents[:5]}")
     
     return user_agents
 
@@ -159,16 +155,15 @@ def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = 
         ## Add link tags to list
         ua_category_tags = ua_category_tags + a_hrefs
         
-        a_href_links = []
+        a_href_links: list[dict[str, str]] = []
         for _a in a_hrefs:
+            ## Format category name & link
             _a_name = _a.text.strip(" ")
             _a_link = f"{UASTRING_BASE_URL}{_a['href']}".strip(" ")
             log.debug(f"Link name: {_a_name}, Link: {_a_link}")
             
             a_href_links.append({"name": _a_name, "link": _a_link})
         
-        ## Extract URLs from <a> tags
-        # a_href_links = [{"name": a.text, "link": f"{UASTRING_BASE_URL}{a['href']}"} for a in a_hrefs]
         links = links + a_href_links
     
     return_obj: dict[str, t.Union[list[str], list[dict[str, str]]]] = {"links": links, "extracted_tags": ua_category_tags}
@@ -177,11 +172,14 @@ def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = 
 
 
 def crawl_ua_categories(headers: dict | None = None, parser: str = "html.parser", request_sleep: int = 5):
-    category_uas: dict[str, list[str] | list[dict[str, str]]] = scrape_ua_categories(headers=headers, parser=parser)
-    categories = category_uas["links"]
-
-    for category in categories["links"]:
+    ua_categories: dict[str, list[str] | list[dict[str, str]]] = scrape_ua_categories(headers=headers, parser=parser)
+    categories = ua_categories["links"]
+    category_uas: list = []
+    
+    log.info(f"Crawling [{len(categories)}] User Agent category/ies")
+    for category in categories:
         log.debug(category)
+        log.info(f"Getting BeautifulSoup for URL: {category['link']}")
         try:
             category_soup = get_soup(url=category["link"])
         except Exception as exc:
@@ -189,9 +187,19 @@ def crawl_ua_categories(headers: dict | None = None, parser: str = "html.parser"
             log.error(f"{msg}")
             continue
 
-        ua_strings: list[str] = extract_ua_strings(soup=category_soup)
-        category_uas.append({"client": category["name"], "user_agents": ua_strings})
+        log.info(f"Extracting UA strings from category '{category['name']}'")
+        try:
+            ua_strings: list[str] = extract_ua_strings(soup=category_soup)
+            category_uas.append({"client": category["name"], "user_agents": ua_strings})
+        except Exception as exc:
+            msg = f"({type(exc)}) Error extracting UA string(s) from category '{category['name']}'. Details: {exc}"
+            log.error(msg)
+            
+            raise exc
 
         if request_sleep:
             print(f"Sleeping for {request_sleep} second(s)...")
             time.sleep(request_sleep)
+    
+    log.info(f"Scraped [{len(category_uas)}] UA string(s)")
+    return category_uas
