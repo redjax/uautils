@@ -164,6 +164,9 @@ def scrape_ua_categories(url: str = UASTRING_CATEGORIES, headers: dict | None = 
             _a_link = f"{UASTRING_BASE_URL}{_a['href']}".strip(" ")
             log.debug(f"Link name: {_a_name}, Link: {_a_link}")
             
+            if _a_name.endswith("user agents strings -->>"):
+                log.warning(f"Found link to more UAs: {_a_name}: {_a_link}")
+            
             a_href_links.append({"name": _a_name, "link": _a_link})
         
         links = links + a_href_links
